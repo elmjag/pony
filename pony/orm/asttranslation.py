@@ -443,8 +443,12 @@ class PreTranslator(ASTTranslator):
 extractors_cache = {}
 
 def create_extractors(code_key, tree, globals, locals, special_functions, const_functions, outer_names=()):
-    result = extractors_cache.get(code_key)
-    if not result:
+    # Don't use extractors cache, due to issues with
+    # 'code_key' not being unique due to recycled memory addresses for generated functions
+
+    #result = extractors_cache.get(code_key)
+    #if not result:
+    if True:
         pretranslator = PreTranslator(tree, globals, locals, special_functions, const_functions, outer_names)
         extractors = {}
         for node in pretranslator.externals:
@@ -458,5 +462,7 @@ def create_extractors(code_key, tree, globals, locals, special_functions, const_
                 def extractor(globals, locals, code=code):
                     return eval(code, globals, locals)
             extractors[src] = extractor
+        #result = extractors_cache[code_key] = tree, extractors
         result = extractors_cache[code_key] = tree, extractors
+
     return result
